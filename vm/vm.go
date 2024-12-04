@@ -14,6 +14,7 @@ import (
 	"github.com/expr-lang/expr/file"
 	"github.com/expr-lang/expr/internal/deref"
 	"github.com/expr-lang/expr/vm/runtime"
+	operin_poc1 "github.com/rrgmc/operin-poc1"
 )
 
 func Run(program *Program, env any) (any, error) {
@@ -21,15 +22,18 @@ func Run(program *Program, env any) (any, error) {
 		return nil, fmt.Errorf("program is nil")
 	}
 
-	vm := VM{}
+	vm := VM{
+		operinConfig: operin_poc1.NewConfig(),
+	}
 	return vm.Run(program, env)
 }
 
 func Debug() *VM {
 	vm := &VM{
-		debug: true,
-		step:  make(chan struct{}, 0),
-		curr:  make(chan int, 0),
+		debug:        true,
+		step:         make(chan struct{}, 0),
+		curr:         make(chan int, 0),
+		operinConfig: operin_poc1.NewConfig(),
 	}
 	return vm
 }
@@ -44,6 +48,7 @@ type VM struct {
 	debug        bool
 	step         chan struct{}
 	curr         chan int
+	operinConfig *operin_poc1.Config
 }
 
 func (vm *VM) Run(program *Program, env any) (_ any, err error) {
