@@ -4,6 +4,7 @@ package vm
 
 import (
 	"fmt"
+	"math"
 	"reflect"
 	"regexp"
 	"sort"
@@ -155,8 +156,9 @@ func (vm *VM) Run(program *Program, env any) (_ any, err error) {
 			vm.push(nil)
 
 		case OpNegate:
-			v := runtime.Negate(vm.pop())
-			vm.push(v)
+			// v := runtime.Negate(vm.pop())
+			// vm.push(v)
+			vm.pushType(vm.operinConfig.Negate(vm.pop()))
 
 		case OpNot:
 			v := vm.pop().(bool)
@@ -165,17 +167,20 @@ func (vm *VM) Run(program *Program, env any) (_ any, err error) {
 		case OpEqual:
 			b := vm.pop()
 			a := vm.pop()
-			vm.push(runtime.Equal(a, b))
+			// vm.push(runtime.Equal(a, b))
+			vm.push(vm.operinConfig.Equals(a, b))
 
 		case OpEqualInt:
 			b := vm.pop()
 			a := vm.pop()
-			vm.push(a.(int) == b.(int))
+			// vm.push(a.(int) == b.(int))
+			vm.push(vm.operinConfig.Equals(a.(int), b.(int)))
 
 		case OpEqualString:
 			b := vm.pop()
 			a := vm.pop()
-			vm.push(a.(string) == b.(string))
+			// vm.push(a.(string) == b.(string))
+			vm.push(vm.operinConfig.Equals(a.(string), b.(string)))
 
 		case OpJump:
 			vm.ip += arg
@@ -217,52 +222,68 @@ func (vm *VM) Run(program *Program, env any) (_ any, err error) {
 		case OpLess:
 			b := vm.pop()
 			a := vm.pop()
-			vm.push(runtime.Less(a, b))
+			// vm.push(runtime.Less(a, b))
+			vm.push(vm.operinConfig.Less(a, b))
 
 		case OpMore:
 			b := vm.pop()
 			a := vm.pop()
-			vm.push(runtime.More(a, b))
+			// vm.push(runtime.More(a, b))
+			vm.push(vm.operinConfig.Greater(a, b))
 
 		case OpLessOrEqual:
 			b := vm.pop()
 			a := vm.pop()
-			vm.push(runtime.LessOrEqual(a, b))
+			// vm.push(runtime.LessOrEqual(a, b))
+			vm.push(vm.operinConfig.LessEq(a, b))
 
 		case OpMoreOrEqual:
 			b := vm.pop()
 			a := vm.pop()
-			vm.push(runtime.MoreOrEqual(a, b))
+			// vm.push(runtime.MoreOrEqual(a, b))
+			vm.push(vm.operinConfig.GreaterEq(a, b))
 
 		case OpAdd:
 			b := vm.pop()
 			a := vm.pop()
-			vm.push(runtime.Add(a, b))
+			// vm.push(runtime.Add(a, b))
+			vm.pushType(vm.operinConfig.Add(a, b))
 
 		case OpSubtract:
 			b := vm.pop()
 			a := vm.pop()
-			vm.push(runtime.Subtract(a, b))
+			// vm.push(runtime.Subtract(a, b))
+			vm.pushType(vm.operinConfig.Subtract(a, b))
 
 		case OpMultiply:
 			b := vm.pop()
 			a := vm.pop()
-			vm.push(runtime.Multiply(a, b))
+			// vm.push(runtime.Multiply(a, b))
+			vm.pushType(vm.operinConfig.Multiply(a, b))
 
 		case OpDivide:
 			b := vm.pop()
 			a := vm.pop()
-			vm.push(runtime.Divide(a, b))
+			// vm.push(runtime.Divide(a, b))
+			vm.pushType(vm.operinConfig.Divide(a, b))
 
 		case OpModulo:
 			b := vm.pop()
 			a := vm.pop()
-			vm.push(runtime.Modulo(a, b))
+			// vm.push(runtime.Modulo(a, b))
+			vm.pushType(vm.operinConfig.Modulo(a, b))
 
 		case OpExponent:
 			b := vm.pop()
 			a := vm.pop()
-			vm.push(runtime.Exponent(a, b))
+			// vm.push(runtime.Exponent(a, b))
+			v, err := vm.operinConfig.CalcFloat(a, b, func(x, y float64) float64 {
+				return math.Pow(x, y)
+			})
+			if err != nil {
+				panic(fmt.Sprintf("invalid operation: float(%T, %T)", a, b))
+			}
+			vm.push(v)
 
 		case OpRange:
 			b := vm.pop()
@@ -590,6 +611,14 @@ func (vm *VM) Run(program *Program, env any) (_ any, err error) {
 
 func (vm *VM) push(value any) {
 	vm.Stack = append(vm.Stack, value)
+}
+
+func (vm *VM) pushType(value operin_poc1.Type) {
+	tv, ok := value.TypeRawValue()
+	if !ok {
+		panic(fmt.Sprintf("type '%s' has no value", value.TypeName()))
+	}
+	vm.push(tv)
 }
 
 func (vm *VM) current() any {

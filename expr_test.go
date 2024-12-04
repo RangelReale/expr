@@ -2742,10 +2742,10 @@ func TestCustom(t *testing.T) {
 		"foo": 11,
 		"bar": 12,
 	}
-	program, err := expr.Compile("foo >= bar", expr.Env(env))
+	program, err := expr.Compile("foo + bar", expr.Env(env))
 	require.NoError(t, err)
 
 	got, err := expr.Run(program, env)
 	require.NoError(t, err)
-	assert.Equal(t, false, got)
+	assert.Equal(t, 23, got)
 }
