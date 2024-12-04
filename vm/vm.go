@@ -24,17 +24,39 @@ func Run(program *Program, env any) (any, error) {
 	}
 
 	vm := VM{
-		operinConfig: operin_poc1.NewConfig(operin_poc1.WithCastIntsAndFloats(true)),
+		operinConfig: operin_poc1.NewConfig(
+			operin_poc1.WithCastIntsAndFloats(true),
+			operin_poc1.WithDefaultIntValue(func(value int64) operin_poc1.Type {
+				return operin_poc1.IntValue(value)
+			}),
+			operin_poc1.WithDefaultUintValue(func(value uint64) operin_poc1.Type {
+				return operin_poc1.UintValue(value)
+			}),
+			operin_poc1.WithDefaultFloatValue(func(value float64) operin_poc1.Type {
+				return operin_poc1.Float64Value(value)
+			}),
+		),
 	}
 	return vm.Run(program, env)
 }
 
 func Debug() *VM {
 	vm := &VM{
-		debug:        true,
-		step:         make(chan struct{}, 0),
-		curr:         make(chan int, 0),
-		operinConfig: operin_poc1.NewConfig(operin_poc1.WithCastIntsAndFloats(true)),
+		debug: true,
+		step:  make(chan struct{}, 0),
+		curr:  make(chan int, 0),
+		operinConfig: operin_poc1.NewConfig(
+			operin_poc1.WithCastIntsAndFloats(true),
+			operin_poc1.WithDefaultIntValue(func(value int64) operin_poc1.Type {
+				return operin_poc1.IntValue(value)
+			}),
+			operin_poc1.WithDefaultUintValue(func(value uint64) operin_poc1.Type {
+				return operin_poc1.UintValue(value)
+			}),
+			operin_poc1.WithDefaultFloatValue(func(value float64) operin_poc1.Type {
+				return operin_poc1.Float64Value(value)
+			}),
+		),
 	}
 	return vm
 }
