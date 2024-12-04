@@ -190,19 +190,31 @@ func (vm *VM) Run(program *Program, env any) (_ any, err error) {
 			b := vm.pop()
 			a := vm.pop()
 			// vm.push(runtime.Equal(a, b))
-			vm.push(vm.operinConfig.Equals(a, b))
+			v, err := vm.operinConfig.EqualsCheck(a, b)
+			if err != nil {
+				panic(err)
+			}
+			vm.push(v)
 
 		case OpEqualInt:
 			b := vm.pop()
 			a := vm.pop()
 			// vm.push(a.(int) == b.(int))
-			vm.push(vm.operinConfig.Equals(a.(int), b.(int)))
+			v, err := vm.operinConfig.EqualsCheck(a.(int), b.(int))
+			if err != nil {
+				panic(err)
+			}
+			vm.push(v)
 
 		case OpEqualString:
 			b := vm.pop()
 			a := vm.pop()
 			// vm.push(a.(string) == b.(string))
-			vm.push(vm.operinConfig.Equals(a.(string), b.(string)))
+			v, err := vm.operinConfig.EqualsCheck(a.(string), b.(string))
+			if err != nil {
+				panic(err)
+			}
+			vm.push(v)
 
 		case OpJump:
 			vm.ip += arg
@@ -251,19 +263,31 @@ func (vm *VM) Run(program *Program, env any) (_ any, err error) {
 			b := vm.pop()
 			a := vm.pop()
 			// vm.push(runtime.More(a, b))
-			vm.push(vm.operinConfig.Greater(a, b))
+			v, err := vm.operinConfig.GreaterCheck(a, b)
+			if err != nil {
+				panic(err)
+			}
+			vm.push(v)
 
 		case OpLessOrEqual:
 			b := vm.pop()
 			a := vm.pop()
 			// vm.push(runtime.LessOrEqual(a, b))
-			vm.push(vm.operinConfig.LessEq(a, b))
+			v, err := vm.operinConfig.LessEqCheck(a, b)
+			if err != nil {
+				panic(err)
+			}
+			vm.push(v)
 
 		case OpMoreOrEqual:
 			b := vm.pop()
 			a := vm.pop()
 			// vm.push(runtime.MoreOrEqual(a, b))
-			vm.push(vm.operinConfig.GreaterEq(a, b))
+			v, err := vm.operinConfig.GreaterEqCheck(a, b)
+			if err != nil {
+				panic(err)
+			}
+			vm.push(v)
 
 		case OpAdd:
 			b := vm.pop()
