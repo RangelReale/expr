@@ -24,7 +24,7 @@ func Run(program *Program, env any) (any, error) {
 	}
 
 	vm := VM{
-		operinConfig: operin_poc1.NewConfig(),
+		operinConfig: operin_poc1.NewConfig(operin_poc1.WithCastIntsAndFloats(true)),
 	}
 	return vm.Run(program, env)
 }
@@ -34,7 +34,7 @@ func Debug() *VM {
 		debug:        true,
 		step:         make(chan struct{}, 0),
 		curr:         make(chan int, 0),
-		operinConfig: operin_poc1.NewConfig(),
+		operinConfig: operin_poc1.NewConfig(operin_poc1.WithCastIntsAndFloats(true)),
 	}
 	return vm
 }
@@ -281,7 +281,7 @@ func (vm *VM) Run(program *Program, env any) (_ any, err error) {
 				return math.Pow(x, y)
 			})
 			if err != nil {
-				panic(fmt.Sprintf("invalid operation: float(%T, %T)", a, b))
+				panic(fmt.Sprintf("invalid operation: float(%T, %T): %s", a, b, err))
 			}
 			vm.push(v)
 
