@@ -660,7 +660,7 @@ func (vm *VM) push(value any) {
 }
 
 func (vm *VM) pushType(value operin_poc1.Type) {
-	tv, ok := value.TypeValue()
+	tv, ok := value.Value()
 	if !ok {
 		panic(fmt.Sprintf("type '%s' has no value", value.TypeName()))
 	}
