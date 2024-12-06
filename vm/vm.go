@@ -16,6 +16,7 @@ import (
 	"github.com/expr-lang/expr/internal/deref"
 	"github.com/expr-lang/expr/vm/runtime"
 	operin_poc1 "github.com/rrgmc/operin-poc1"
+	"github.com/rrgmc/operin-poc1/operintypeslice"
 )
 
 func Run(program *Program, env any) (any, error) {
@@ -35,6 +36,7 @@ func Run(program *Program, env any) (any, error) {
 			operin_poc1.WithDefaultFloatValue(func(value float64) operin_poc1.Type {
 				return operin_poc1.Float64Value(value)
 			}),
+			operin_poc1.WithTypeFactory(operintypeslice.NewPrimitiveTypeFactory()),
 		),
 	}
 	return vm.Run(program, env)
@@ -56,6 +58,7 @@ func Debug() *VM {
 			operin_poc1.WithDefaultFloatValue(func(value float64) operin_poc1.Type {
 				return operin_poc1.Float64Value(value)
 			}),
+			operin_poc1.WithTypeFactory(operintypeslice.NewPrimitiveTypeFactory()),
 		),
 	}
 	return vm
