@@ -37,6 +37,7 @@ func Run(program *Program, env any) (any, error) {
 				return operin_poc1.Float64Value(value)
 			}),
 			operin_poc1.WithTypeFactory(operintypeslice.NewPrimitiveTypeFactory()),
+			// operin_poc1.WithTypeFactory(operintype.NewPrimitiveReflectTypeFactory()),
 		),
 	}
 	return vm.Run(program, env)
@@ -59,6 +60,7 @@ func Debug() *VM {
 				return operin_poc1.Float64Value(value)
 			}),
 			operin_poc1.WithTypeFactory(operintypeslice.NewPrimitiveTypeFactory()),
+			// operin_poc1.WithTypeFactory(operintype.NewPrimitiveReflectTypeFactory()),
 		),
 	}
 	return vm
