@@ -16,6 +16,7 @@ import (
 	"github.com/expr-lang/expr/internal/deref"
 	"github.com/expr-lang/expr/vm/runtime"
 	operin_poc1 "github.com/rrgmc/operin-poc1"
+	"github.com/rrgmc/operin-poc1/operincore"
 	"github.com/rrgmc/operin-poc1/operintypeslice"
 )
 
@@ -38,6 +39,9 @@ func Run(program *Program, env any) (any, error) {
 			}),
 			operin_poc1.WithTypeFactory(operintypeslice.NewPrimitiveTypeFactory()),
 			// operin_poc1.WithTypeFactory(operintype.NewPrimitiveReflectTypeFactory()),
+			operin_poc1.WithTypeFactory(operincore.TypeFactoryFunc(func(value any, options operincore.Options) (operincore.Type, bool) {
+				return operin_poc1.ValueDeepEqual{value}, true
+			})),
 		),
 	}
 	return vm.Run(program, env)
