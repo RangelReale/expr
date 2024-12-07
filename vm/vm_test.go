@@ -29,6 +29,7 @@ func TestRun_ReuseVM(t *testing.T) {
 	require.NoError(t, err)
 
 	reuse := vm.VM{}
+	vm.InitVM(&reuse)
 	_, err = reuse.Run(program, nil)
 	require.NoError(t, err)
 	_, err = reuse.Run(program, nil)
@@ -37,6 +38,7 @@ func TestRun_ReuseVM(t *testing.T) {
 
 func TestRun_ReuseVM_for_different_variables(t *testing.T) {
 	v := vm.VM{}
+	vm.InitVM(&v)
 
 	program, err := expr.Compile(`let a = 1; a + 1`)
 	require.NoError(t, err)

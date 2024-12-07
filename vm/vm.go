@@ -25,26 +25,29 @@ func Run(program *Program, env any) (any, error) {
 		return nil, fmt.Errorf("program is nil")
 	}
 
-	vm := VM{
-		operinConfig: operin_poc1.NewConfig(
-			operin_poc1.WithCastIntsAndFloats(true),
-			operin_poc1.WithDefaultIntValue(func(value int64) operin_poc1.Type {
-				return operin_poc1.IntValue(value)
-			}),
-			operin_poc1.WithDefaultUintValue(func(value uint64) operin_poc1.Type {
-				return operin_poc1.UintValue(value)
-			}),
-			operin_poc1.WithDefaultFloatValue(func(value float64) operin_poc1.Type {
-				return operin_poc1.Float64Value(value)
-			}),
-			operin_poc1.WithTypeFactory(operintypeslice.NewPrimitiveTypeFactory()),
-			// operin_poc1.WithTypeFactory(operintype.NewPrimitiveReflectTypeFactory()),
-			operin_poc1.WithTypeFactory(operincore.TypeFactoryFunc(func(value any, options operincore.Options) (operincore.Type, bool) {
-				return operin_poc1.ValueDeepEqual{value}, true
-			})),
-		),
-	}
+	vm := VM{}
+	InitVM(&vm)
 	return vm.Run(program, env)
+}
+
+func InitVM(vm *VM) {
+	vm.operinConfig = operin_poc1.NewConfig(
+		operin_poc1.WithCastIntsAndFloats(true),
+		operin_poc1.WithDefaultIntValue(func(value int64) operin_poc1.Type {
+			return operin_poc1.IntValue(value)
+		}),
+		operin_poc1.WithDefaultUintValue(func(value uint64) operin_poc1.Type {
+			return operin_poc1.UintValue(value)
+		}),
+		operin_poc1.WithDefaultFloatValue(func(value float64) operin_poc1.Type {
+			return operin_poc1.Float64Value(value)
+		}),
+		operin_poc1.WithTypeFactory(operintypeslice.NewPrimitiveTypeFactory()),
+		// operin_poc1.WithTypeFactory(operintype.NewPrimitiveReflectTypeFactory()),
+		operin_poc1.WithTypeFactory(operincore.TypeFactoryFunc(func(value any, options operincore.Options) (operincore.Type, bool) {
+			return operin_poc1.ValueDeepEqual{value}, true
+		})),
+	)
 }
 
 func Debug() *VM {
@@ -52,21 +55,8 @@ func Debug() *VM {
 		debug: true,
 		step:  make(chan struct{}, 0),
 		curr:  make(chan int, 0),
-		operinConfig: operin_poc1.NewConfig(
-			operin_poc1.WithCastIntsAndFloats(true),
-			operin_poc1.WithDefaultIntValue(func(value int64) operin_poc1.Type {
-				return operin_poc1.IntValue(value)
-			}),
-			operin_poc1.WithDefaultUintValue(func(value uint64) operin_poc1.Type {
-				return operin_poc1.UintValue(value)
-			}),
-			operin_poc1.WithDefaultFloatValue(func(value float64) operin_poc1.Type {
-				return operin_poc1.Float64Value(value)
-			}),
-			operin_poc1.WithTypeFactory(operintypeslice.NewPrimitiveTypeFactory()),
-			// operin_poc1.WithTypeFactory(operintype.NewPrimitiveReflectTypeFactory()),
-		),
 	}
+	InitVM(vm)
 	return vm
 }
 
@@ -320,7 +310,8 @@ func (vm *VM) Run(program *Program, env any) (_ any, err error) {
 			b := vm.pop()
 			a := vm.pop()
 			// vm.push(runtime.Divide(a, b))
-			vm.pushType(vm.operinConfig.Divide(a, b))
+			// vm.pushType(vm.operinConfig.Divide(a, b))
+			vm.pushType(vm.operinConfig.DivideFloat(a, b))
 
 		case OpModulo:
 			b := vm.pop()
