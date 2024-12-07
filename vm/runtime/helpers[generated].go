@@ -2,6 +2,8 @@
 
 package runtime
 
+/
+/*
 import (
 	"fmt"
 	"reflect"
@@ -3716,3 +3718,4 @@ func Modulo(a, b interface{}) int {
 	}
 	panic(fmt.Sprintf("invalid operation: %T %% %T", a, b))
 }
+*/
