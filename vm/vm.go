@@ -256,11 +256,11 @@ func (vm *VM) Run(program *Program, env any) (_ any, err error) {
 			b := vm.pop()
 			a := vm.pop()
 			// vm.push(runtime.Less(a, b))
-			cmp, err := vm.operinConfig.LessCheck(a, b)
+			v, err := vm.operinConfig.LessCheck(a, b)
 			if err != nil {
 				panic(err)
 			}
-			vm.push(cmp)
+			vm.push(v)
 
 		case OpMore:
 			b := vm.pop()
