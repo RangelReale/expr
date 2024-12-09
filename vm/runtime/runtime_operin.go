@@ -3,31 +3,31 @@ package runtime
 import (
 	"fmt"
 
-	operin_poc1 "github.com/rrgmc/operin-poc1"
-	"github.com/rrgmc/operin-poc1/operincore"
-	"github.com/rrgmc/operin-poc1/operintypeslice"
+	opgo_poc2 "github.com/rrgmc/opgo-poc2"
+	"github.com/rrgmc/opgo-poc2/opgocore"
+	"github.com/rrgmc/opgo-poc2/opgotypeslice"
 )
 
-var operinConfig = operin_poc1.NewConfig(
-	operin_poc1.WithCastIntsAndFloats(true),
-	operin_poc1.WithDefaultIntValue(func(value int64) operin_poc1.Type {
-		return operin_poc1.IntValue(value)
+var opgoConfig = opgo_poc2.NewConfig(
+	opgo_poc2.WithCastIntsAndFloats(true),
+	opgo_poc2.WithDefaultIntValue(func(value int64) opgo_poc2.Type {
+		return opgo_poc2.IntValue(value)
 	}),
-	operin_poc1.WithDefaultUintValue(func(value uint64) operin_poc1.Type {
-		return operin_poc1.UintValue(value)
+	opgo_poc2.WithDefaultUintValue(func(value uint64) opgo_poc2.Type {
+		return opgo_poc2.UintValue(value)
 	}),
-	operin_poc1.WithDefaultFloatValue(func(value float64) operin_poc1.Type {
-		return operin_poc1.Float64Value(value)
+	opgo_poc2.WithDefaultFloatValue(func(value float64) opgo_poc2.Type {
+		return opgo_poc2.Float64Value(value)
 	}),
-	operin_poc1.WithTypeFactory(operintypeslice.NewPrimitiveTypeFactory()),
-	// operin_poc1.WithTypeFactory(operintype.NewPrimitiveReflectTypeFactory()),
-	operin_poc1.WithTypeFactory(operincore.TypeFactoryFunc(func(value any, options operincore.Options) (operincore.Type, bool) {
-		return operin_poc1.ValueDeepEqual{value}, true
+	opgo_poc2.WithTypeFactory(opgotypeslice.NewPrimitiveTypeFactory()),
+	// opgo_poc2.WithTypeFactory(opgotype.NewPrimitiveReflectTypeFactory()),
+	opgo_poc2.WithTypeFactory(opgocore.TypeFactoryFunc(func(value any, options opgocore.Options) (opgocore.Type, bool) {
+		return opgo_poc2.ValueDeepEqual{value}, true
 	})),
 )
 
 func Equal(a, b interface{}) bool {
-	v, err := operinConfig.EqualsCheck(a, b)
+	v, err := opgoConfig.EqualsCheck(a, b)
 	if err != nil {
 		panic(err)
 	}
@@ -35,7 +35,7 @@ func Equal(a, b interface{}) bool {
 }
 
 func Less(a, b interface{}) bool {
-	v, err := operinConfig.LessCheck(a, b)
+	v, err := opgoConfig.LessCheck(a, b)
 	if err != nil {
 		panic(err)
 	}
@@ -43,7 +43,7 @@ func Less(a, b interface{}) bool {
 }
 
 func More(a, b interface{}) bool {
-	v, err := operinConfig.GreaterCheck(a, b)
+	v, err := opgoConfig.GreaterCheck(a, b)
 	if err != nil {
 		panic(err)
 	}
@@ -51,7 +51,7 @@ func More(a, b interface{}) bool {
 }
 
 func LessOrEqual(a, b interface{}) bool {
-	v, err := operinConfig.LessEqCheck(a, b)
+	v, err := opgoConfig.LessEqCheck(a, b)
 	if err != nil {
 		panic(err)
 	}
@@ -59,36 +59,36 @@ func LessOrEqual(a, b interface{}) bool {
 }
 
 func MoreOrEqual(a, b interface{}) bool {
-	v, err := operinConfig.GreaterEqCheck(a, b)
+	v, err := opgoConfig.GreaterEqCheck(a, b)
 	if err != nil {
 		panic(err)
 	}
 	return v
 }
 
-func retType(value operin_poc1.Type) any {
+func retType(value opgo_poc2.Type) any {
 	if !value.IsValueValid() {
 		panic(fmt.Sprintf("type '%s' has no valid value", value.TypeName()))
 	}
 	return value.Value()
 }
 
-func retTypeFloat(value operin_poc1.Type) float64 {
+func retTypeFloat(value opgo_poc2.Type) float64 {
 	if !value.IsValueValid() {
 		panic(fmt.Sprintf("type '%s' has no valid value", value.TypeName()))
 	}
-	vf, err := operinConfig.TypeToFloat(value)
+	vf, err := opgoConfig.TypeToFloat(value)
 	if err != nil {
 		panic(fmt.Sprintf("error converting type '%s' to float: %s", value.TypeName(), err))
 	}
 	return vf
 }
 
-func retTypeInt(value operin_poc1.Type) int {
+func retTypeInt(value opgo_poc2.Type) int {
 	if !value.IsValueValid() {
 		panic(fmt.Sprintf("type '%s' has no valid value", value.TypeName()))
 	}
-	vf, err := operinConfig.TypeToInt(value)
+	vf, err := opgoConfig.TypeToInt(value)
 	if err != nil {
 		panic(fmt.Sprintf("error converting type '%s' to int: %s", value.TypeName(), err))
 	}
@@ -96,21 +96,21 @@ func retTypeInt(value operin_poc1.Type) int {
 }
 
 func Add(a, b interface{}) interface{} {
-	return retType(operinConfig.Add(a, b))
+	return retType(opgoConfig.Add(a, b))
 }
 
 func Subtract(a, b interface{}) interface{} {
-	return retType(operinConfig.Subtract(a, b))
+	return retType(opgoConfig.Subtract(a, b))
 }
 
 func Multiply(a, b interface{}) interface{} {
-	return retType(operinConfig.Multiply(a, b))
+	return retType(opgoConfig.Multiply(a, b))
 }
 
 func Divide(a, b interface{}) float64 {
-	return retTypeFloat(operinConfig.DivideFloat(a, b))
+	return retTypeFloat(opgoConfig.DivideFloat(a, b))
 }
 
 func Modulo(a, b interface{}) int {
-	return retTypeInt(operinConfig.Modulo(a, b))
+	return retTypeInt(opgoConfig.Modulo(a, b))
 }
